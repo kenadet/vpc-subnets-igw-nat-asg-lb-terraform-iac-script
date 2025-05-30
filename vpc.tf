@@ -92,39 +92,4 @@ resource "aws_route_table_association" "private-subnet-assoc" {
   subnet_id = element(aws_subnet.private-subnet[*].id, count.index)
   route_table_id = aws_route_table.route-table-from-nat-gw-src.id
 }
-
-# Nat-GW Setup - Multiple Nat-GW for Private subnets in Multiple AZs
-# resource "aws_eip" "eip" {
-#   count = length(var.private_subnets_cidr)  # Create one EIP for each private subnet
-
-#   domain = "vpc"
-# }
-
-# resource "aws_nat_gateway" "nat-gw" {
-#   count           = length(var.private_subnets_cidr)  # Create a NAT Gateway per private subnet
-#   allocation_id   = element(aws_eip.eip[*].id, count.index)  # Dynamically select EIP based on the count index
-#   subnet_id       = element(aws_subnet.public-subnet[*].id, count.index)  # Select correct public subnet based on AZ index
-#   depends_on       = [aws_internet_gateway.igw]
-# }
-
-# resource "aws_route_table" "route-table-from-nat-gw-src" {
-#   count   = length(var.private_subnets_cidr)
-#   vpc_id  = aws_vpc.main.id
-
-#   route {
-#     cidr_block      = "0.0.0.0/0"  # Route internet traffic
-#     nat_gateway_id  = element(aws_nat_gateway.nat-gw[*].id, count.index)  # Use correct NAT GW
-#   }
-
-#   tags = {
-#     Name        = "${var.environment}-nat-gw-route-table-${count.index}"
-#     Environment = var.environment
-#   }
-# }
-
-# resource "aws_route_table_association" "private-subnet-assoc" {
-#   count = length(var.private_subnets_cidr)
-
-#   subnet_id      = element(aws_subnet.private-subnet[*].id, count.index)  # Associate with correct Private Subnet
-#   route_table_id = aws_route_table.route-table-from-nat-gw-src[count.index].id  # Associate with correct Route Table
-# }
+}
